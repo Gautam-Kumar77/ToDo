@@ -76,7 +76,7 @@
 
 <body>
     <div class="container">
-        <h3 class="pt-5 text-center">Django ToDo App</h3>
+        <h3 class="pt-5 text-center"> <b> <u>ToDo App </u> </b> </h3>
         <div class="row">
             <h4>My Day</h4>
             <p class="text-muted">{% now "jS F Y" %}</p>
@@ -89,9 +89,10 @@
                             <div class="card-body">
                                 {{ i.task }}
                                 <span style="position: relative; float: right;">
-                                    <a class="btn btn-success"><i class="fa fa-check"></i> Mark as Done</a>
-                                    <a class="btn btn-danger"><i class="fa fa-trash"></i></a>
-                                    <a class="btn btn-primary"><i class="fa fa-pencil"></i></a>
+                                    <a href="{% url 'mark_as_done' i.pk %}" class="btn btn-success"><i
+                                            class="fa fa-check"></i> Mark as Done</a>
+                                    <a href="{% url 'delete_task' i.pk %}" class="btn btn-danger"><i class="fa fa-trash"></i></a>
+                                    <a href="{% url 'edit_task' i.pk %}" class="btn btn-primary"><i class="fa fa-pencil"></i></a>
                                 </span>
                             </div>
                         </div>
@@ -104,7 +105,8 @@
                             <div class="form-group">
                                 <span style="display: flex;">
                                     <input type="text" name="task" class="form-control" placeholder="Add a task">
-                                    <button type="submit" class="btn btn-primary" style="width: 200px;"><i class="fa fa-plus"></i>
+                                    <button type="submit" class="btn btn-primary" style="width: 200px;"><i
+                                            class="fa fa-plus"></i>
                                         Add</button>
                                 </span>
                             </div>
@@ -115,14 +117,20 @@
             <div class="col-md-5 col-lg-5">
                 <h5>Completed Tasks</h5>
                 <!-- List of all the tasks that have completed -->
+                {% for i in completed_tasks %}
                 <div class="card m-1">
                     <div class="card-body">
-                        This is the completed task.
+                        {{ i.task }}
+                        <span style="position: relative; float: right;">
+                            <a href="{% url 'mark_as_Undone' i.pk %}" class="btn btn-warning"><i class="fa fa-times"></i>
+                                Mark as UnDone</a>
+                        </span>
                     </div>
                 </div>
+                {% endfor %}
             </div>
         </div>
-        
+
     </div>
 </body>
 
