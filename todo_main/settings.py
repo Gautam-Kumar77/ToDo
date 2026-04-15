@@ -31,17 +31,28 @@ SECRET_KEY = os.environ.get(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
 
+def _split_env_csv(value):
+    return [item.strip() for item in value.split(',') if item.strip()]
+
+
+raw_allowed_hosts = _split_env_csv(os.environ.get('ALLOWED_HOSTS', ''))
+if not raw_allowed_hosts:
+    raw_allowed_hosts = ['127.0.0.1', 'localhost', '.onrender.com']
+
+render_hostname = os.environ.get('RENDER_EXTERNAL_HOSTNAME', '').strip()
+if render_hostname:
+    raw_allowed_hosts.append(render_hostname)
+
 ALLOWED_HOSTS = [
-    host.strip().removeprefix('https://').removeprefix('http://')
-    for host in os.environ.get('ALLOWED_HOSTS', '127.0.0.1,localhost,.onrender.com').split(',')
-    if host.strip()
+    host.removeprefix('https://').removeprefix('http://')
+    for host in raw_allowed_hosts
 ]
 
-CSRF_TRUSTED_ORIGINS = [
-    origin.strip()
-    for origin in os.environ.get('CSRF_TRUSTED_ORIGINS', 'https://*.onrender.com').split(',')
-    if origin.strip()
-]
+CSRF_TRUSTED_ORIGINS = _split_env_csv(os.environ.get('CSRF_TRUSTED_ORIGINS', 'https://*.onrender.com'))
+if render_hostname:
+    render_origin = f'https://{render_hostname}'
+    if render_origin not in CSRF_TRUSTED_ORIGINS:
+        CSRF_TRUSTED_ORIGINS.append(render_origin)
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
